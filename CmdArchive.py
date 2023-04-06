@@ -7,13 +7,25 @@
 import os
 import subprocess
 
+HOME_DIRECTORY="~/.local/share/cmd_archive/"
+HISTORY_FILE="history.json"
+
+
 class CmdArchive():
-    def __init__(self, directory="~/.local/share/cmd_archive/"):
+    def __init__(self, directory=HOME_DIRECTORY):
         self.home_directory = os.path.expanduser(directory)
 
     def setup_environment(self):
         if os.path.exists(self.home_directory) == False:
             os.mkdir(self.home_directory)
+
+        history_file_path = self.home_directory + HISTORY_FILE
+
+        if os.path.exists(history_file_path) == False:
+            f = open(history_file_path, "w")
+            # Empty JSON 
+            f.write("{}")
+            f.close()
 
         return self
 
@@ -22,6 +34,12 @@ class CmdArchive():
             print("Home Directory -> PASS")
         else:
             print("Home Directory not setup -> FAIL")
+
+        if os.path.exists(self.home_directory + HISTORY_FILE):
+            print("History File -> PASS")
+        else:
+            print("History File not setup -> FAIL")
+
 
 
     def run_cmd(self,cmd):
