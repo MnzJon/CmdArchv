@@ -38,6 +38,24 @@ class Command():
     def __str__(self):
         return self.cmd()
 
+    def to_dictionary(self):
+        # Get array of flag dictionaries
+        d_flags = []
+        for flag in self.token_flags:
+            d_flag = {
+                        "flag": flag.get_flag(),
+                        "value": flag.get_value()
+                    }
+            d_flags.append(d_flag)
+        
+        d = {
+                "script": self.script.get_script(),
+                "flags": d_flags,
+                "build": self.build_cmd.get_cmd(),
+                "epilogue": self.epilogue.get_cmd()
+            }
+
+        return d
 
 
     def has_token_flag(self, flag):

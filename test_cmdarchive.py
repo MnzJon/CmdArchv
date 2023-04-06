@@ -5,7 +5,8 @@ cmdArch = CmdArchive()
 cmdArch.setup_environment().environment_test()
 
 cmdBuilder = CommandBuilder()
-cmd = cmdBuilder.set_script("ls").set_epilogue("echo 'it worked'").build()
+cmd = cmdBuilder.set_script("ls").set_epilogue("echo 'it worked'").append_token_flag(["FLAG1","ONE"]).build()
 
 cmdArch.run_cmd(cmd)
+print(cmd.to_dictionary())
 

@@ -7,13 +7,15 @@
 import os
 import subprocess
 
+from HistoryStorage import HistoryStorage
+
 HOME_DIRECTORY="~/.local/share/cmd_archive/"
 HISTORY_FILE="history.json"
-
 
 class CmdArchive():
     def __init__(self, directory=HOME_DIRECTORY):
         self.home_directory = os.path.expanduser(directory)
+        self.hist_storage = HistoryStorage(self.home_directory + HISTORY_FILE)
 
     def setup_environment(self):
         if os.path.exists(self.home_directory) == False:

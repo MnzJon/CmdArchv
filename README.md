@@ -9,7 +9,7 @@
 * [x] Create directory where all files are stored
 
 # Run Command
-* [ ] Setup a command
+* [x] Setup a command
 
 # History
 * [ ] Store recently executed command

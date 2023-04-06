@@ -5,6 +5,9 @@ class ScriptToken():
     def set_script(self, cmd):
         self.script = cmd
 
+    def get_script(self):
+        return self.script
+
     def __str__(self):
         return self.script
 
@@ -15,6 +18,9 @@ class EpilogueToken():
     def set_cmd(self, cmd):
         self.script = cmd
 
+    def get_cmd(self):
+        return self.script
+
     def __str__(self):
         return self.script
 
@@ -24,6 +30,9 @@ class BuildCommandToken():
 
     def set_cmd(self, cmd):
         self.script = cmd
+
+    def get_cmd(self):
+        return self.script
 
     def __str__(self):
         return self.script
