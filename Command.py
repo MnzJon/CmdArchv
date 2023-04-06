@@ -57,9 +57,9 @@ class Command():
 
         return d
 
-
     def has_token_flag(self, flag):
         pass
+
 
 
 class CommandBuilder():

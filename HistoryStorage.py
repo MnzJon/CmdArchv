@@ -44,7 +44,18 @@ class HistoryStorage():
             jsonFile.truncate()
 
     def get_recent_cmd(self):
-        pass
+        json_cmd = {}
+        with open(self.path, "r") as jsonFile:
+            data = json.load(jsonFile)
+
+            json_cmd = data["recent"]
+
+        # get command ID
+        cmd_id = ""
+        for k in json_cmd.keys():
+            
+            cmd_id = k
+        return json_cmd[k]
 
     def select_cmd(self, index):
         pass

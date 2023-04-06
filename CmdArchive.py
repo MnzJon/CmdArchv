@@ -8,9 +8,26 @@ import os
 import subprocess
 
 from HistoryStorage import HistoryStorage
+from Command import Command
 
 HOME_DIRECTORY="~/.local/share/cmd_archive/"
 HISTORY_FILE="history.json"
+
+def to_command(dictionary):
+    script = dictionary["script"]
+    build = dictionary["build"]
+    epilogue = dictionary["epilogue"]
+    flags = []
+    for flag in dictionary["flags"]:
+        flag_tuple = []
+        flag_tuple.append(flag["flag"])
+        flag_tuple.append(flag["value"])
+
+        flags.append(flag_tuple)
+
+    cmd = Command(script, flags, build, epilogue)
+
+    return cmd
 
 class CmdArchive():
     def __init__(self, directory=HOME_DIRECTORY):
@@ -37,11 +54,15 @@ class CmdArchive():
         else:
             print("History File not setup -> FAIL")
 
-
-
     def run_cmd(self,cmd):
         # Store command
         self.hist_storage.store_cmd(cmd)
 
         subprocess.call(str(cmd),shell=True)
 
+    def run_previous_cmd(self):
+        prev_cmd_dictionary = self.hist_storage.get_recent_cmd()
+        cmd = to_command(prev_cmd_dictionary)
+
+        self.run_cmd(cmd) 
+        print(str(cmd))
