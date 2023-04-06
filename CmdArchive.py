@@ -21,13 +21,8 @@ class CmdArchive():
         if os.path.exists(self.home_directory) == False:
             os.mkdir(self.home_directory)
 
-        history_file_path = self.home_directory + HISTORY_FILE
+        self.hist_storage.setup()
 
-        if os.path.exists(history_file_path) == False:
-            f = open(history_file_path, "w")
-            # Empty JSON 
-            f.write("{}")
-            f.close()
 
         return self
 
@@ -45,5 +40,8 @@ class CmdArchive():
 
 
     def run_cmd(self,cmd):
+        # Store command
+        self.hist_storage.store_cmd(cmd)
+
         subprocess.call(str(cmd),shell=True)
 
