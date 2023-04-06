@@ -6,10 +6,16 @@
 * Metadata
 
 # Environment Setup
-* Create directory where all files are stored
+* [x] Create directory where all files are stored
+
+# Run Command
+* [ ] Setup a command
 
 # History
-* Store recently executed command
+* [ ] Store recently executed command
+    
+    - [ ] Create history json file
+
 
 # Favorite Commands - (MVP)
 * Select commands to be saved
