@@ -3,8 +3,8 @@ from StateHolder import StateHolder
 
 class ParameterizedFlags(StateHolder):
     def setup(self):
-        if os.path.exists(self.path) == False:
-            f = open(self.path, "w")
+        if os.path.exists(self.filepath) == False:
+            f = open(self.filepath, "w")
             # Empty JSON 
             f.write('{}')
             f.close()

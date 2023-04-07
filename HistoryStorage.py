@@ -25,7 +25,7 @@ class HistoryStorage(StateHolder):
         history_state["past"][cmd_id] = cmd.to_dictionary()
         history_state["recent"][cmd_id] = cmd.to_dictionary()
 
-        write_data(self.filepath, data)
+        self.write_data(history_state)
 
     def get_history(self):
         return self.get_element("history")
@@ -40,4 +40,4 @@ class HistoryStorage(StateHolder):
             cmd_id = k
             break
 
-        return json_cmd[cmd_id]
+        return recent_data[cmd_id]
