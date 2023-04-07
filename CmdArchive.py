@@ -8,10 +8,12 @@ import os
 import subprocess
 
 from HistoryStorage import HistoryStorage
+from FavouritesStorage import FavouritesStorage
 from Command import Command
 
 HOME_DIRECTORY="~/.local/share/cmd_archive/"
 HISTORY_FILE="history.json"
+FAVOURITES_FILE="favourites.json"
 
 def to_command(dictionary):
     script = dictionary["script"]
@@ -33,12 +35,14 @@ class CmdArchive():
     def __init__(self, directory=HOME_DIRECTORY):
         self.home_directory = os.path.expanduser(directory)
         self.hist_storage = HistoryStorage(self.home_directory + HISTORY_FILE)
+        self.favourites_storage = FavouritesStorage(self.home_directory + FAVOURITES_FILE)
 
     def setup_environment(self):
         if os.path.exists(self.home_directory) == False:
             os.mkdir(self.home_directory)
 
         self.hist_storage.setup()
+        self.favourites_storage.setup()
 
 
         return self
@@ -53,6 +57,11 @@ class CmdArchive():
             print("History File -> PASS")
         else:
             print("History File not setup -> FAIL")
+
+        if os.path.exists(self.home_directory + FAVOURITES_FILE):
+            print("Favourites File -> PASS")
+        else: 
+            print("Favourites File not setup -> FAIL")
 
     def run_cmd(self,cmd):
         # Store command
@@ -72,14 +81,21 @@ class CmdArchive():
 
         return history
 
-    def select_history_cmd(self, debug=False):
 
+    def history_log(self, cmd_history):
         index = 0
         history = self.get_history()
         for (cmd, cmd_id) in history: 
             print(str(index) + " => " + str(cmd) + " : " + cmd_id)
 
             index += 1
+
+        return index
+
+    def select_history_cmd(self, debug=False):
+
+        history = self.get_history()
+        index = self.history_log(history)
 
         option = input("Choose Command: ")
         if type(int(option)) is int:
@@ -92,6 +108,29 @@ class CmdArchive():
                 self.run_cmd(cmd)
         else:
             print("Did not enter an integer")
+
+    def get_favourites(self):
+        favs_dict = self.favourites_storage.get_favourites()
+
+        print(favs_dict)
+
+    def add_favourite_prompt(self):
+        history = self.get_history()
+        history_max = self.history_log(history)
+
+        option = input("Choose Command as Favourite : ")
+        option = int(option)
+
+        if option > history_max:
+            print("Invalid input")
+        else:
+            # store 
+            cmd_id = input("Enter ID for Favourite : ")
+            cmd = history[option][0]
+
+            self.favourites_storage.store_favourite(cmd, cmd_id)
+
+
 
     def run_previous_cmd(self):
         prev_cmd_dictionary = self.hist_storage.get_recent_cmd()
