@@ -61,6 +61,85 @@ def command_modifier(cmd, parameterized=False, parameters={}):
 
         return cmdBuilder.build()
 
+class APICmdArchive():
+    def __init__(self):
+        self.cmdArchv = CmdArchive()
+        self.cmdArchv.setup_environment()
+
+    def sanity_check(self):
+        self.cmdArchv.environment_test()
+
+    def show_history(self):
+        self.history_log() 
+
+    def show_favourites(self):
+        print(self.cmdArchv.get_favourites())
+
+    def show_flags(self):
+        pass
+
+    def show_parameters(self):
+        parameters = self.cmdArchv.parameterized_flags.get_parameters()
+        print(parameters)
+
+    def run_previous_cmd(self):
+        prev_cmd_dictionary = self.cmdArchv.hist_storage.get_recent_cmd()
+        cmd = to_command(prev_cmd_dictionary)
+
+        self.cmdArchv.run_cmd(cmd) 
+
+    def run_favourite(self, cmd_id):
+        favs = self.cmdArchv.get_favourites()
+
+        if cmd_id in favs:
+            cmd = to_command(favs[cmd_id])
+            self.cmdArchv.run_cmd(cmd)
+
+    def history_log(self):
+        index = 0
+        history = self.cmdArchv.get_history()
+        for (cmd, cmd_id) in history: 
+            print(str(index) + " => " + str(cmd) + " : " + cmd_id)
+
+            index += 1
+
+        return index
+
+    def add_favourite_prompt(self):
+        history = self.cmdArchv.get_history()
+        history_max = self.history_log()
+
+        option = input("Choose Command as Favourite : ")
+        option = int(option)
+
+        if option > history_max:
+            print("Invalid input")
+        else:
+            # store 
+            cmd_id = input("Enter ID for Favourite : ")
+            cmd = history[option][0]
+
+            self.cmdArchv.favourites_storage.store_favourite(cmd, cmd_id)
+
+    def select_cmd_from_history(self):
+        index = self.history_log()
+        history = self.cmdArchv.get_history()
+
+        option = input("Choose Command: ")
+        if type(int(option)) is int:
+            option = int(option)
+            if option > index:
+                print("Invalid option")
+            else:
+                # Run command
+                cmd = history[option][0]
+                self.cmdArchv.run_cmd(cmd)
+        else:
+            print("Did not enter an integer")
+
+    def run_new_cmd(self):
+        pass
+
 class CmdArchive():
     def __init__(self, directory=HOME_DIRECTORY):
         self.home_directory = os.path.expanduser(directory)
@@ -78,17 +157,6 @@ class CmdArchive():
 
         return self
 
-    def add_parameter_flag(self, param):
-        self.parameterized_flags.add_parameter(param)
-
-    def show_parameters(self):
-        parameters = self.parameterized_flags.get_parameters()
-
-        print(parameters)
-
-    def remove_parameter(self, param):
-        self.parameterized_flags.remove_parameter(param)
-
     def environment_test(self):
         if os.path.exists(self.home_directory):
             print("Home Directory -> PASS")
@@ -105,15 +173,19 @@ class CmdArchive():
         else: 
             print("Favourites File not setup -> FAIL")
 
+    def add_parameter_flag(self, param):
+        self.parameterized_flags.add_parameter(param)
+
+    def remove_parameter(self, param):
+        self.parameterized_flags.remove_parameter(param)
+
     def run_cmd(self,cmd):
         # Store command
         parameters = self.parameterized_flags.get_parameters()
-        cmd = command_modifier(cmd, True, parameters)
+        cmd = command_modifier(cmd, False, parameters)
         self.hist_storage.store_cmd(cmd)
 
         subprocess.call(str(cmd),shell=True)
-
-
 
     def get_history(self):
         cmd_history = self.hist_storage.get_history()
@@ -128,67 +200,7 @@ class CmdArchive():
         return history
 
 
-    def history_log(self):
-        index = 0
-        history = self.get_history()
-        for (cmd, cmd_id) in history: 
-            print(str(index) + " => " + str(cmd) + " : " + cmd_id)
-
-            index += 1
-
-        return index
-
-    def show_history(self):
-        self.history_log() 
-
-    def select_history_cmd(self, debug=False):
-
-        index = self.history_log()
-
-        option = input("Choose Command: ")
-        if type(int(option)) is int:
-            option = int(option)
-            if option > index:
-                print("Invalid option")
-            else:
-                # Run command
-                cmd = history[option][0]
-                self.run_cmd(cmd)
-        else:
-            print("Did not enter an integer")
-
     def get_favourites(self):
-        favs_dict = self.favourites_storage.get_favourites()
+        favs_dict = self.favourites_storage.get_state()
 
         return favs_dict
-
-    def add_favourite_prompt(self):
-        history = self.get_history()
-        history_max = self.history_log(history)
-
-        option = input("Choose Command as Favourite : ")
-        option = int(option)
-
-        if option > history_max:
-            print("Invalid input")
-        else:
-            # store 
-            cmd_id = input("Enter ID for Favourite : ")
-            cmd = history[option][0]
-
-            self.favourites_storage.store_favourite(cmd, cmd_id)
-
-
-    def run_favourite(self, cmd_id):
-        favs = self.get_favourites()
-
-        if cmd_id in favs:
-            cmd = to_command(favs[cmd_id])
-            self.run_cmd(cmd)
-
-
-    def run_previous_cmd(self):
-        prev_cmd_dictionary = self.hist_storage.get_recent_cmd()
-        cmd = to_command(prev_cmd_dictionary)
-
-        self.run_cmd(cmd) 

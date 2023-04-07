@@ -28,7 +28,7 @@ class HistoryStorage(StateHolder):
         self.write_data(history_state)
 
     def get_history(self):
-        return self.get_element("history")
+        return self.get_element("past")
 
     def get_recent_cmd(self):
         recent_data = self.get_element("recent")
