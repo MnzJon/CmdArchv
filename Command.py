@@ -20,9 +20,21 @@ class Command():
     def set_epilogue(self, epilogue):
         self.epilogue.set_cmd(epilogue)
 
+    def get_script(self):
+        return self.script.get_script()
+
+    def get_build_cmd(self):
+        return self.build_cmd.get_cmd()
+
+    def get_epilogue(self):
+        return self.epilogue.get_cmd()
+
     def append_token_flag(self, flag_value):
         new_flag_token = FlagToken(flag_value[0],flag_value[1])
         self.token_flags.append(new_flag_token)
+
+    def get_flags(self):
+        return self.token_flags
 
     def cmd(self):
         cmd_string = str(self.script) + " "

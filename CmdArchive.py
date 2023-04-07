@@ -9,7 +9,7 @@ import subprocess
 
 from HistoryStorage import HistoryStorage
 from FavouritesStorage import FavouritesStorage
-from Command import Command
+from Command import Command, CommandBuilder
 from ParameterizedFlags import ParameterizedFlags
 
 HOME_DIRECTORY="~/.local/share/cmd_archive/"
@@ -32,6 +32,34 @@ def to_command(dictionary):
     cmd = Command(script, flags, build, epilogue)
 
     return cmd
+
+def command_modifier(cmd, parameterized=False, parameters={}):
+    if parameterized == False:
+        return cmd
+    else:
+        # Build new command with parameterized values
+        cmdBuilder = CommandBuilder()
+        script_str = cmd.get_script()
+        build_cmd_str = cmd.get_build_cmd()
+        epilogue_str =cmd.get_epilogue()
+
+        cmdBuilder = cmdBuilder.set_script(script_str).set_build_cmd(build_cmd_str).set_epilogue(epilogue_str)
+
+        # Iterate through flags and prompt for new value if in parameter
+        flags = cmd.get_flags()
+        for flag_token in flags:
+            flag = flag_token.get_flag()
+            value = flag_token.get_value()
+
+            if flag in parameters:
+                value = input("Enter value for "+flag+" => ")
+
+            new_flag_token = [flag, value]
+
+            cmdBuilder = cmdBuilder.append_token_flag(new_flag_token)
+
+
+        return cmdBuilder.build()
 
 class CmdArchive():
     def __init__(self, directory=HOME_DIRECTORY):
@@ -79,9 +107,13 @@ class CmdArchive():
 
     def run_cmd(self,cmd):
         # Store command
+        parameters = self.parameterized_flags.get_parameters()
+        cmd = command_modifier(cmd, True, parameters)
         self.hist_storage.store_cmd(cmd)
 
         subprocess.call(str(cmd),shell=True)
+
+
 
     def get_history(self):
         cmd_history = self.hist_storage.get_history()
@@ -96,7 +128,7 @@ class CmdArchive():
         return history
 
 
-    def history_log(self, cmd_history):
+    def history_log(self):
         index = 0
         history = self.get_history()
         for (cmd, cmd_id) in history: 
@@ -106,10 +138,12 @@ class CmdArchive():
 
         return index
 
+    def show_history(self):
+        self.history_log() 
+
     def select_history_cmd(self, debug=False):
 
-        history = self.get_history()
-        index = self.history_log(history)
+        index = self.history_log()
 
         option = input("Choose Command: ")
         if type(int(option)) is int:
