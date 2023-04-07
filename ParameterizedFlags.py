@@ -1,7 +1,7 @@
 import os
-from StateHolder import StateHolder 
+from StateHolder import FileStateHolder 
 
-class ParameterizedFlags(StateHolder):
+class ParameterizedFlags(FileStateHolder):
     def setup(self):
         if os.path.exists(self.filepath) == False:
             f = open(self.filepath, "w")

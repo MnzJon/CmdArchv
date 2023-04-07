@@ -1,9 +1,9 @@
 import json
 import os
 from datetime import datetime
-from StateHolder import StateHolder
+from StateHolder import FileStateHolder
 
-class HistoryStorage(StateHolder):
+class HistoryStorage(FileStateHolder):
 
     def setup(self):
         if os.path.exists(self.filepath) == False:

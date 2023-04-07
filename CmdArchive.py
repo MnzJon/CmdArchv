@@ -61,16 +61,35 @@ def command_modifier(cmd, parameterized=False, parameters={}):
 
         return cmdBuilder.build()
 
+# Selects the StateHolder based on an id
+class HistoryController():
+    def __init__(self):
+        self.holders = {}
+
+    def add_holder(self,h_id, holder):
+        self.holders[h_id] = holder
+
+    def get_holder(self,h_id):
+        return self.holders[h_id]
+
+    def get_history(self,h_id):
+        return self.holders[h_id].get_state()["past"]
+
 class APICmdArchive():
     def __init__(self):
         self.cmdArchv = CmdArchive()
         self.cmdArchv.setup_environment()
+        self.history_holder = HistoryController()
+
+        self.history_holder.add_holder("global", self.cmdArchv.hist_storage)
+        self.history_holder.add_holder("tmux", TmuxStateHolder())
 
     def sanity_check(self):
         self.cmdArchv.environment_test()
 
-    def show_history(self):
-        self.history_log() 
+    def show_history(self, session_id):
+        history_data = self.history_controller.get_history(session_id)
+        self.history_log(history_data) 
 
     def show_favourites(self):
         print(self.cmdArchv.get_favourites())
@@ -95,9 +114,9 @@ class APICmdArchive():
             cmd = to_command(favs[cmd_id])
             self.cmdArchv.run_cmd(cmd)
 
-    def history_log(self):
+    def history_log(self, history_data):
         index = 0
-        history = self.cmdArchv.get_history()
+        history = history_data
         for (cmd, cmd_id) in history: 
             print(str(index) + " => " + str(cmd) + " : " + cmd_id)
 
