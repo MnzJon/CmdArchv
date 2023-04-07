@@ -1,24 +1,12 @@
 import json
 import os
 from datetime import datetime
+from StateHolder import StateHolder
 
-#
-#
-#   { recent: {IDO: --cmd--},
-#     past: { "ID0": { CMD }, "ID0": {CMD}}
-#   
-#   }
-#
-#
-#
-
-
-class HistoryStorage():
-    def __init__(self, path):
-        self.path = path
+class HistoryStorage(StateHolder):
 
     def setup(self):
-        if os.path.exists(self.path) == False:
+        if os.path.exists(self.filepath) == False:
             f = open(self.path, "w")
             # Empty JSON 
             f.write('{ "recent": {}, "past": {}}')
@@ -30,41 +18,26 @@ class HistoryStorage():
         now = datetime.now()
         cmd_id = now.strftime("%Y-%m-%d_%H-%M-%S")
 
-        with open(self.path, "r+") as jsonFile:
-            data = json.load(jsonFile)
+        history_state = self.get_state()
 
-            data["recent"] = {}
+        history_state["recent"] = {}
 
-        # Update dictionary
-            data["past"][cmd_id] = cmd.to_dictionary()
-            data["recent"][cmd_id] = cmd.to_dictionary()
+        history_state["past"][cmd_id] = cmd.to_dictionary()
+        history_state["recent"][cmd_id] = cmd.to_dictionary()
 
-            jsonFile.seek(0)  # rewind
-            json.dump(data, jsonFile)
-            jsonFile.truncate()
+        write_data(self.filepath, data)
 
     def get_history(self):
-        json_history = {}
-        with open(self.path, "r") as jsonFile:
-            data = json.load(jsonFile)
-
-            json_history = data["past"]
-
-        return json_history
+        return self.get_element("history")
 
     def get_recent_cmd(self):
-        json_cmd = {}
-        with open(self.path, "r") as jsonFile:
-            data = json.load(jsonFile)
-
-            json_cmd = data["recent"]
-
+        recent_data = self.get_element("recent")
         # get command ID
+
         cmd_id = ""
-        for k in json_cmd.keys():
+        for k in recent_data.keys():
             
             cmd_id = k
-        return json_cmd[k]
+            break
 
-    def select_cmd(self, index):
-        pass
+        return json_cmd[cmd_id]

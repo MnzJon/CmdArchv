@@ -1,10 +1,7 @@
 import os
-import json
+from StateHolder import StateHolder 
 
-class ParameterizedFlags():
-    def __init__(self, path):
-        self.path = path
-
+class ParameterizedFlags(StateHolder):
     def setup(self):
         if os.path.exists(self.path) == False:
             f = open(self.path, "w")
@@ -15,30 +12,11 @@ class ParameterizedFlags():
         return True
 
     def add_parameter(self, param):
-        with open(self.path, "r+") as jsonFile:
-            data = json.load(jsonFile)
-            
-            data[param] = True
-
-            jsonFile.seek(0)  # rewind
-            json.dump(data, jsonFile)
-            jsonFile.truncate()
+        self.set_element(param, True)
 
     def remove_parameter(self,param):
-        with open(self.path, "r+") as jsonFile:
-            data = json.load(jsonFile)
-            
-            data.pop(param)
-
-            jsonFile.seek(0)  # rewind
-            json.dump(data, jsonFile)
-            jsonFile.truncate()
+        self.remove_element(param)
 
     def get_parameters(self):
-        json_parameters = {}
-        with open(self.path, "r") as jsonFile:
-            data = json.load(jsonFile)
-            json_parameters = data
-
-        return json_parameters
+        return self.get_state()
 
