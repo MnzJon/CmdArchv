@@ -10,5 +10,4 @@ cmd = cmdBuilder.set_script("ls").set_epilogue("echo 'it worked'").append_token_
 cmdArch.run_cmd(cmd)
 print(cmd.to_dictionary())
 cmdArch.run_previous_cmd()
-cmd_history = cmdArch.show_history()
-print(cmd_history)
+cmdArch.select_history_cmd()

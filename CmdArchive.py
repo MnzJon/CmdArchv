@@ -60,14 +60,41 @@ class CmdArchive():
 
         subprocess.call(str(cmd),shell=True)
 
-    def show_history(self):
+    def get_history(self):
         cmd_history = self.hist_storage.get_history()
+        history = []
+        for cmd_id in cmd_history.keys():
+            cmd = to_command(cmd_history[cmd_id])
+            single_history = [cmd, cmd_id]
 
-        return cmd_history
+            history.append(single_history)
+        # Parse the history into an array
+
+        return history
+
+    def select_history_cmd(self, debug=False):
+
+        index = 0
+        history = self.get_history()
+        for (cmd, cmd_id) in history: 
+            print(str(index) + " => " + str(cmd) + " : " + cmd_id)
+
+            index += 1
+
+        option = input("Choose Command: ")
+        if type(int(option)) is int:
+            option = int(option)
+            if option > index:
+                print("Invalid option")
+            else:
+                # Run command
+                cmd = history[option][0]
+                self.run_cmd(cmd)
+        else:
+            print("Did not enter an integer")
 
     def run_previous_cmd(self):
         prev_cmd_dictionary = self.hist_storage.get_recent_cmd()
         cmd = to_command(prev_cmd_dictionary)
 
         self.run_cmd(cmd) 
-        print(str(cmd))
