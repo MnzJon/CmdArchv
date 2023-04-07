@@ -14,3 +14,5 @@ cmd = cmdBuilder.set_script("ls").set_epilogue("echo 'it worked'").append_token_
 cmdArch.get_favourites()
 # cmdArch.add_favourite_prompt()
 cmdArch.run_favourite("test_id")
+#cmdArch.add_parameter_flag("FLAG2")
+cmdArch.show_parameters()

@@ -10,10 +10,12 @@ import subprocess
 from HistoryStorage import HistoryStorage
 from FavouritesStorage import FavouritesStorage
 from Command import Command
+from ParameterizedFlags import ParameterizedFlags
 
 HOME_DIRECTORY="~/.local/share/cmd_archive/"
 HISTORY_FILE="history.json"
 FAVOURITES_FILE="favourites.json"
+PARAMETER_FILE="parameter_flags.json"
 
 def to_command(dictionary):
     script = dictionary["script"]
@@ -36,6 +38,7 @@ class CmdArchive():
         self.home_directory = os.path.expanduser(directory)
         self.hist_storage = HistoryStorage(self.home_directory + HISTORY_FILE)
         self.favourites_storage = FavouritesStorage(self.home_directory + FAVOURITES_FILE)
+        self.parameterized_flags = ParameterizedFlags(self.home_directory + PARAMETER_FILE)
 
     def setup_environment(self):
         if os.path.exists(self.home_directory) == False:
@@ -43,9 +46,20 @@ class CmdArchive():
 
         self.hist_storage.setup()
         self.favourites_storage.setup()
-
+        self.parameterized_flags.setup()
 
         return self
+
+    def add_parameter_flag(self, param):
+        self.parameterized_flags.add_parameter(param)
+
+    def show_parameters(self):
+        parameters = self.parameterized_flags.get_parameters()
+
+        print(parameters)
+
+    def remove_parameter(self, param):
+        self.parameterized_flags.remove_parameter(param)
 
     def environment_test(self):
         if os.path.exists(self.home_directory):
