@@ -112,7 +112,7 @@ class CmdArchive():
     def get_favourites(self):
         favs_dict = self.favourites_storage.get_favourites()
 
-        print(favs_dict)
+        return favs_dict
 
     def add_favourite_prompt(self):
         history = self.get_history()
@@ -130,6 +130,13 @@ class CmdArchive():
 
             self.favourites_storage.store_favourite(cmd, cmd_id)
 
+
+    def run_favourite(self, cmd_id):
+        favs = self.get_favourites()
+
+        if cmd_id in favs:
+            cmd = to_command(favs[cmd_id])
+            self.run_cmd(cmd)
 
 
     def run_previous_cmd(self):

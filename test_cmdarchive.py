@@ -13,3 +13,4 @@ cmd = cmdBuilder.set_script("ls").set_epilogue("echo 'it worked'").append_token_
 # cmdArch.select_history_cmd()
 cmdArch.get_favourites()
 # cmdArch.add_favourite_prompt()
+cmdArch.run_favourite("test_id")
