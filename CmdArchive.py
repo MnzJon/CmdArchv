@@ -60,6 +60,11 @@ class CmdArchive():
 
         subprocess.call(str(cmd),shell=True)
 
+    def show_history(self):
+        cmd_history = self.hist_storage.get_history()
+
+        return cmd_history
+
     def run_previous_cmd(self):
         prev_cmd_dictionary = self.hist_storage.get_recent_cmd()
         cmd = to_command(prev_cmd_dictionary)

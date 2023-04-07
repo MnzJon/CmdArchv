@@ -43,6 +43,15 @@ class HistoryStorage():
             json.dump(data, jsonFile)
             jsonFile.truncate()
 
+    def get_history(self):
+        json_history = {}
+        with open(self.path, "r") as jsonFile:
+            data = json.load(jsonFile)
+
+            json_history = data["past"]
+
+        return json_history
+
     def get_recent_cmd(self):
         json_cmd = {}
         with open(self.path, "r") as jsonFile:
