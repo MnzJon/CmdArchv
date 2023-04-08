@@ -7,10 +7,7 @@
 import os
 import subprocess
 
-from HistoryStorage import HistoryStorage
-from FavouritesStorage import FavouritesStorage
 from Command import Command, CommandBuilder
-from ParameterizedFlags import ParameterizedFlags
 
 HOME_DIRECTORY="~/.local/share/cmd_archive/"
 HISTORY_FILE="history.json"

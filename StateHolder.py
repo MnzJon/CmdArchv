@@ -95,6 +95,33 @@ class FileStateHolder(StateHolder):
     def get_path(self):
         return filepath
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+########### LEGACY ##############
+
 class TmuxStateHolder(FileStateHolder):
 
 
