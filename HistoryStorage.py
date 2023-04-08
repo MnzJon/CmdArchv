@@ -3,11 +3,12 @@ import os
 from datetime import datetime
 from StateHolder import FileStateHolder
 
-class HistoryStorage(FileStateHolder):
+class RecentStorage(FileStateHolder):
 
+class HistoryStorage(FileStateHolder):
     def setup(self):
-        if os.path.exists(self.filepath) == False:
-            f = open(self.path, "w")
+        if os.path.exists(self.get_path()) == False:
+            f = open(self.get_path(), "w")
             # Empty JSON 
             f.write('{ "recent": {}, "past": {}}')
             f.close()

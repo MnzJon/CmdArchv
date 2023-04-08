@@ -7,13 +7,14 @@ import sys
 import libtmux
 s = libtmux.Server()
 
-tmux = TmuxStateHolder()
-print(s.session)
+tmux = TmuxStateHolder("~/.local/share/cmd_archive/tmux/")
 
 try:
     #print(os.environ["TMUX"])
-    tmux.session_id()
-except:
+    #tmux.session_id()
+    print(tmux.get_path())
+except Exception as e:
+    print(e)
     print("No TMUX")
 
 

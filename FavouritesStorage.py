@@ -3,9 +3,11 @@ import os
 from StateHolder import FileStateHolder
 
 class FavouritesStorage(FileStateHolder):
+    def get_path(self):
+        return self.filepath
     def setup(self):
-        if os.path.exists(self.filepath) == False:
-            f = open(self.filepath, "w")
+        if os.path.exists(self.get_path()) == False:
+            f = open(self.get_path(), "w")
             # Empty JSON 
             f.write('{}')
             f.close()

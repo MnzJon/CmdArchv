@@ -79,13 +79,15 @@ class APICmdArchive():
     def __init__(self):
         self.cmdArchv = CmdArchive()
         self.cmdArchv.setup_environment()
-        self.history_holder = HistoryController()
+        self.history_controller = HistoryController()
 
-        self.history_holder.add_holder("global", self.cmdArchv.hist_storage)
-        self.history_holder.add_holder("tmux", TmuxStateHolder())
+        self.history_controller.add_holder("global", self.cmdArchv.hist_storage)
+        self.history_controller.add_holder("tmux", TmuxStateHolder())
 
     def sanity_check(self):
         self.cmdArchv.environment_test()
+
+
 
     def show_history(self, session_id):
         history_data = self.history_controller.get_history(session_id)
@@ -140,9 +142,9 @@ class APICmdArchive():
 
             self.cmdArchv.favourites_storage.store_favourite(cmd, cmd_id)
 
-    def select_cmd_from_history(self):
+    def select_cmd_from_history(self, session_id):
         index = self.history_log()
-        history = self.cmdArchv.get_history()
+        history = self.history_controller.get_history(session_id).get_history()
 
         option = input("Choose Command: ")
         if type(int(option)) is int:
@@ -153,6 +155,9 @@ class APICmdArchive():
                 # Run command
                 cmd = history[option][0]
                 self.cmdArchv.run_cmd(cmd)
+                # Store command to specific session
+                if session_id != "global":
+                    self.history_controller.get_history(session_id).get_history().store_cmd(cmd)
         else:
             print("Did not enter an integer")
 
@@ -162,7 +167,9 @@ class APICmdArchive():
 class CmdArchive():
     def __init__(self, directory=HOME_DIRECTORY):
         self.home_directory = os.path.expanduser(directory)
+        self.history_collection = HistoryCollection(self.home_directory)
         self.hist_storage = HistoryStorage(self.home_directory + HISTORY_FILE)
+
         self.favourites_storage = FavouritesStorage(self.home_directory + FAVOURITES_FILE)
         self.parameterized_flags = ParameterizedFlags(self.home_directory + PARAMETER_FILE)
 
@@ -206,19 +213,18 @@ class CmdArchive():
 
         subprocess.call(str(cmd),shell=True)
 
-    def get_history(self):
-        cmd_history = self.hist_storage.get_history()
-        history = []
-        for cmd_id in cmd_history.keys():
-            cmd = to_command(cmd_history[cmd_id])
-            single_history = [cmd, cmd_id]
+    # HISTORY SECTION
+    def add_history(self, h_id, history_state):
+        self.history_collection.add_history(h_id,history_state)
 
-            history.append(single_history)
-        # Parse the history into an array
+    def get_history(self, h_id):
+        return self.history_collection.get_history(h_id)
 
-        return history
+    def store_cmd(self, cmd,history_id):
+        history = self.get_history(history_id)
+        history.store_cmd(cmd)
 
-
+    # Favourite Section
     def get_favourites(self):
         favs_dict = self.favourites_storage.get_state()
 
