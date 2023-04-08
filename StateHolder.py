@@ -11,6 +11,19 @@ class SessionStateHolder():
         self.history = FileStateHolder(self.directory + "history.json")
         self.recent = FileStateHolder(self.directory + "recent.json")
 
+        self.history.setup_path()
+        self.recent.setup_path()
+
+    def setup_environment(self):
+        if os.path.exists(self.directory) == false:
+            os.mkdir(self.directory)
+
+
+    def sanity_check(self):
+        if os.path.exists(self.directory):
+            print("Directory exists")
+
+
     def get_history(self):
         return self.history.get_state()
 
@@ -72,6 +85,12 @@ class StateHolder():
 class FileStateHolder(StateHolder):
     def __init__(self, filepath):
         self.filepath = filepath
+
+    def setup_path(self):
+        if os.path.exists(self.filepath) == false:
+            f = open(self.filepath, "w")
+            f.write('{}')
+            f.close()
 
     def get_path(self):
         return filepath

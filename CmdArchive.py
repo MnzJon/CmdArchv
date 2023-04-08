@@ -157,8 +157,8 @@ class CmdArchive():
     def __init__(self, directory=HOME_DIRECTORY):
         self.home_directory = os.path.expanduser(directory)
 
-        self.favourites_storage = FavouritesStorage(self.home_directory + FAVOURITES_FILE)
-        self.parameterized_flags = ParameterizedFlags(self.home_directory + PARAMETER_FILE)
+        self.favourites_storage = FileStateStorage(self.home_directory + FAVOURITES_FILE)
+        self.parameterized_flags = FileStateStorages(self.home_directory + PARAMETER_FILE)
 
     def setup_environment(self):
         if os.path.exists(self.home_directory) == False:
@@ -203,9 +203,6 @@ class CmdArchive():
 
     def get_history(self, session_state):
         return session_state.get_history()
-
-    def store_cmd(self, cmd, session_state):
-        session_state.insert_to_history(cmd)
 
     # Favourite Section
     def get_favourites(self):
