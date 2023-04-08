@@ -5,7 +5,8 @@ from io import StringIO # Python3 use: from io import StringIO
 import sys
 
 class SessionStateHolder():
-    def __init__(self, directory):
+    def __init__(self, state_id, directory):
+        self.state_id = state_id
         self.directory = directory
         self.history = FileStateHolder(self.directory + "history.json")
         self.recent = FileStateHolder(self.directory + "recent.json")
@@ -13,8 +14,22 @@ class SessionStateHolder():
     def get_history(self):
         return self.history.get_state()
 
-    def get_recent(self):
+    def get_recent_cmd(self):
         return self.recent.get_state()
+        recent_cmd_data = self.recent.get_element("recent") 
+        # get command ID
+
+        cmd_id = ""
+        for k in recent_cmd_data.keys():
+            
+            cmd_id = k
+            break
+
+        return recent_cmd_data[cmd_id]
+
+    def record_cmd(self, cmd):
+        self.insert_to_history(cmd)
+        self.insert_to_recent(cmd)
 
     def insert_to_history(self, cmd):
         now = datetime.now()
