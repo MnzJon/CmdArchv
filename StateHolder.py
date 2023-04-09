@@ -50,12 +50,16 @@ class SessionStateHolder():
 
     def insert_to_history(self, cmd):
         now = datetime.now()
-        cmd_id = now.strftime("%Y-%m-%d_%H-%M-%S")
+        cmd_id = now.strftime("%Y-%m-%d_%H-%M-%S-%f")
 
         self.history.set_element(cmd_id, cmd.to_dictionary())
 
     def insert_to_recent(self, cmd):
         self.recent.set_element("recent",cmd.to_dictionary())
+
+    def clear(self):
+        self.history.clear()
+        self.recent.clear()
 
 
 class StateHolder():
@@ -98,6 +102,9 @@ class FileStateHolder(StateHolder):
 
     def get_path(self):
         return self.filepath
+
+    def clear(self):
+        write_json(self.filepath, {})
 
 
 

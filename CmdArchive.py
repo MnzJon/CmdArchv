@@ -62,11 +62,11 @@ def command_modifier(cmd, parameterized=False, parameters={}):
 
 
 class CmdArchive():
-    def __init__(self, directory=HOME_DIRECTORY):
+    def __init__(self, directory):
         self.home_directory = os.path.abspath(directory)
 
-        self.favourites_storage = FileStateHolder(self.home_directory + FAVOURITES_FILE)
-        self.parameterized_flags = FileStateHolder(self.home_directory + PARAMETER_FILE)
+        self.favourites_storage = FileStateHolder(self.home_directory + "/favourites.json")
+        self.parameterized_flags = FileStateHolder(self.home_directory + "/parameter_flags.json")
 
     def setup_environment(self):
         if os.path.exists(self.home_directory) == False:

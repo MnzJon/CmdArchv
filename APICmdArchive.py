@@ -1,11 +1,19 @@
 from CmdArchive import CmdArchive, to_command, command_modifier
+from StateHolder import SessionStateHolder
+
+HOME_DIRECTORY="~/.local/share/cmd_archive/"
 
 class APICmdArchive():
-    def __init__(self):
-        self.cmdArchv = CmdArchive()
-        self.global_session_state = SessionStateHolder("global", HOME_DIRECTORY)
+    def __init__(self, directory=HOME_DIRECTORY):
+        self.cmdArchv = CmdArchive(directory)
+        self.cmdArchv.setup_environment()
+        print(directory)
+        self.global_session_state = SessionStateHolder("global", directory)
 
-    def show_history(self):
+    def get_global_session(self):
+        return self.global_session_state
+
+    def show_history(self, session_state):
         history_data = session_state.get_history()
         self.history_log(history_data) 
 
@@ -41,9 +49,11 @@ class APICmdArchive():
 
     def history_log(self, history_data):
         index = 0
-        history = history_data
-        for (cmd, cmd_id) in history: 
-            print(str(index) + " => " + str(cmd) + " : " + cmd_id)
+        # Sort dictionary
+        history = dict(sorted(history_data.items()))
+        for cmd_id in history.keys(): 
+            cmd = history[cmd_id]
+            print(str(index) + " => " + str(to_command(cmd)) + " : " + cmd_id)
 
             index += 1
 
@@ -88,6 +98,9 @@ class APICmdArchive():
                 # Store command to specific session
         else:
             print("Did not enter an integer")
+
+    def clear_history(self, session_state):
+        session_state.clear()
 
     def run_new_cmd(self):
         pass
