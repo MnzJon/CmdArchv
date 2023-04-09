@@ -13,7 +13,7 @@ class APICmdArchive():
         print(self.cmdArchv.get_favourites())
 
     def show_flags(self):
-        pass
+        print(self.cmdArchv.get_parameter_flag())
 
     def show_parameters(self):
         parameters = self.cmdArchv.parameterized_flags.get_parameters()

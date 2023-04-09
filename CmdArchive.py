@@ -8,11 +8,12 @@ import os
 import subprocess
 
 from Command import Command, CommandBuilder
+from StateHolder import FileStateHolder
 
 HOME_DIRECTORY="~/.local/share/cmd_archive/"
-HISTORY_FILE="history.json"
-FAVOURITES_FILE="favourites.json"
-PARAMETER_FILE="parameter_flags.json"
+HISTORY_FILE="/history.json"
+FAVOURITES_FILE="/favourites.json"
+PARAMETER_FILE="/parameter_flags.json"
 
 def to_command(dictionary):
     script = dictionary["script"]
@@ -62,41 +63,20 @@ def command_modifier(cmd, parameterized=False, parameters={}):
 
 class CmdArchive():
     def __init__(self, directory=HOME_DIRECTORY):
-        self.home_directory = os.path.expanduser(directory)
+        self.home_directory = os.path.abspath(directory)
 
-        self.favourites_storage = FileStateStorage(self.home_directory + FAVOURITES_FILE)
-        self.parameterized_flags = FileStateStorages(self.home_directory + PARAMETER_FILE)
+        self.favourites_storage = FileStateHolder(self.home_directory + FAVOURITES_FILE)
+        self.parameterized_flags = FileStateHolder(self.home_directory + PARAMETER_FILE)
 
     def setup_environment(self):
         if os.path.exists(self.home_directory) == False:
             os.mkdir(self.home_directory)
 
-        self.favourites_storage.setup()
-        self.parameterized_flags.setup()
+        self.favourites_storage.setup_path()
+        self.parameterized_flags.setup_path()
 
         return self
 
-    def environment_test(self):
-        if os.path.exists(self.home_directory):
-            print("Home Directory -> PASS")
-        else:
-            print("Home Directory not setup -> FAIL")
-
-        if os.path.exists(self.home_directory + HISTORY_FILE):
-            print("History File -> PASS")
-        else:
-            print("History File not setup -> FAIL")
-
-        if os.path.exists(self.home_directory + FAVOURITES_FILE):
-            print("Favourites File -> PASS")
-        else: 
-            print("Favourites File not setup -> FAIL")
-
-    def add_parameter_flag(self, param):
-        self.parameterized_flags.add_parameter(param)
-
-    def remove_parameter(self, param):
-        self.parameterized_flags.remove_parameter(param)
 
     def run_cmd(self,cmd):
         # Store command
@@ -108,11 +88,26 @@ class CmdArchive():
 
         subprocess.call(str(cmd),shell=True)
 
-    def get_history(self, session_state):
-        return session_state.get_history()
+    #def get_history(self, session_state):
+    #    return session_state.get_history()
+
+    #def get_recent(self, session_state):
+    #    return session_state.get_recent_cmd()
 
     # Favourite Section
     def get_favourites(self):
         favs_dict = self.favourites_storage.get_state()
 
         return favs_dict
+
+    def add_favourite(self, cmd_id, cmd):
+        self.favourites_storage.set_element(cmd_id, cmd.to_dictionary())
+
+    def get_parameters(self):
+        return self.parameterized_flags.get_state()
+
+    def add_parameter_flag(self, param):
+        self.parameterized_flags.set_element(param, True)
+
+    def remove_parameter(self, param):
+        self.parameterized_flags.remove_element(param)

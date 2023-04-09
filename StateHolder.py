@@ -11,8 +11,8 @@ class SessionStateHolder():
         self.state_id = state_id
         self.directory = os.path.abspath(directory)
         print(directory)
-        self.history = FileStateHolder(self.directory + "history.json")
-        self.recent = FileStateHolder(self.directory + "recent.json")
+        self.history = FileStateHolder(self.directory + "/history.json")
+        self.recent = FileStateHolder(self.directory + "/recent.json")
 
         self.history.setup_path()
         self.recent.setup_path()
@@ -31,8 +31,9 @@ class SessionStateHolder():
         return self.history.get_state()
 
     def get_recent_cmd(self):
-        return self.recent.get_state()
         recent_cmd_data = self.recent.get_element("recent") 
+
+        return recent_cmd_data
         # get command ID
 
         cmd_id = ""
