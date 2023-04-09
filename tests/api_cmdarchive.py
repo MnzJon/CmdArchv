@@ -25,4 +25,10 @@ def run_api_history():
     api_cmdArch.show_history(session_state)
     api_cmdArch.clear_history(session_state)
 
+def run_api_favourites():
+    pass
+
+def run_api_parameter_flags():
+    pass
+
 run_api_history()
