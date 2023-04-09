@@ -1,13 +1,16 @@
 import json
+import os
 import subprocess
 from datetime import datetime
+from utils import read_json, write_json
 from io import StringIO # Python3 use: from io import StringIO
 import sys
 
 class SessionStateHolder():
     def __init__(self, state_id, directory):
         self.state_id = state_id
-        self.directory = directory
+        self.directory = os.path.abspath(directory)
+        print(directory)
         self.history = FileStateHolder(self.directory + "history.json")
         self.recent = FileStateHolder(self.directory + "recent.json")
 
@@ -15,7 +18,7 @@ class SessionStateHolder():
         self.recent.setup_path()
 
     def setup_environment(self):
-        if os.path.exists(self.directory) == false:
+        if os.path.exists(self.directory) == False:
             os.mkdir(self.directory)
 
 
@@ -48,10 +51,10 @@ class SessionStateHolder():
         now = datetime.now()
         cmd_id = now.strftime("%Y-%m-%d_%H-%M-%S")
 
-        self.history.set_element(cmd_id, cmd)
+        self.history.set_element(cmd_id, cmd.to_dictionary())
 
     def insert_to_recent(self, cmd):
-        self.recent.set_element("recent",cmd)
+        self.recent.set_element("recent",cmd.to_dictionary())
 
 
 class StateHolder():
@@ -67,7 +70,7 @@ class StateHolder():
         return json_data[element]
 
     def set_element(self, element, value):
-        json_data = self.get_state
+        json_data = self.get_state()
         json_data[element] = value
         self.write_data(json_data)
 
@@ -87,13 +90,13 @@ class FileStateHolder(StateHolder):
         self.filepath = filepath
 
     def setup_path(self):
-        if os.path.exists(self.filepath) == false:
+        if os.path.exists(self.filepath) == False:
             f = open(self.filepath, "w")
             f.write('{}')
             f.close()
 
     def get_path(self):
-        return filepath
+        return self.filepath
 
 
 
