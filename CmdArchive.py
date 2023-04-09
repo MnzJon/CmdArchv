@@ -11,9 +11,6 @@ from Command import Command, CommandBuilder
 from StateHolder import FileStateHolder
 
 HOME_DIRECTORY="~/.local/share/cmd_archive/"
-HISTORY_FILE="/history.json"
-FAVOURITES_FILE="/favourites.json"
-PARAMETER_FILE="/parameter_flags.json"
 
 def to_command(dictionary):
     script = dictionary["script"]
