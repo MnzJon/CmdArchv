@@ -1,0 +1,1 @@
+{"2023-04-09_13-04-28": {"script": "ls", "flags": [{"flag": "FLAG1", "value": "ON"}], "build": "build", "epilogue": "; notify.sh"}}

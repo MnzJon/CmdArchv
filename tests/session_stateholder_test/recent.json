@@ -1,0 +1,1 @@
+{"recent": {"script": "ls", "flags": [{"flag": "FLAG1", "value": "ON"}], "build": "build", "epilogue": "; notify.sh"}}
