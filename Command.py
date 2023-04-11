@@ -42,8 +42,8 @@ class Command():
     def cmd(self):
         cmd_string = str(self.script) + " "
         for flag_value in self.token_flags:
-            flag = flag_value[0]
-            value = flag_value[1]
+            flag = flag_value.get_flag()
+            value = flag_value.get_value()
             cmd_string += str(flag) + "=" + str(value) + " "
         
         cmd_string += str(self.build_cmd) + " ; "
@@ -105,7 +105,8 @@ class CommandBuilder():
         flag_tokens = []
         for i in range(flag_start_index, index):
             flag_value = tokens[i].split('=')
-            flag_tokens.append(flag_value)
+            flag_token = FlagToken(flag_value[0],flag_value[1])
+            flag_tokens.append(flag_token)
 
         # Find build script
         if index + 1 == len(tokens):

@@ -45,12 +45,15 @@ class SessionStateHolder():
         return recent_cmd_data[cmd_id]
 
     def record_cmd(self, cmd):
+        print(str(cmd))
         self.insert_to_history(cmd)
         self.insert_to_recent(cmd)
 
     def insert_to_history(self, cmd):
         now = datetime.now()
         cmd_id = now.strftime("%Y-%m-%d_%H-%M-%S-%f")
+
+        print(cmd.to_dictionary())
 
         self.history.set_element(cmd_id, cmd.to_dictionary())
 
