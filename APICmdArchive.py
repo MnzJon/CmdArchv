@@ -102,5 +102,7 @@ class APICmdArchive():
     def clear_history(self, session_state):
         session_state.clear()
 
-    def run_new_cmd(self):
-        pass
+    def run_new_cmd(self, cmd, session_state):
+        self.store_cmd(cmd, session_state)
+        self.cmdArchv.run_cmd(cmd)
+        print("running new command")

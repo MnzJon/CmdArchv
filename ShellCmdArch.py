@@ -3,6 +3,7 @@ import subprocess
 import sys
 from APICmdArchive import APICmdArchive, HOME_DIRECTORY
 from StateHolder import SessionStateHolder
+from Command import CommandBuilder
 
 
 class ShellCmdArchAST():
@@ -86,7 +87,9 @@ class ShellCmdArch():
         else:
             session_state = get_session_state()
 
-        if commands == ["history","show"]:
+        if commands == []:
+            print("No commands entered")
+        elif commands == ["history","show"]:
             self.cmdArch.show_history(session_state)
         elif commands == ["history","select"]:
             self.cmdArch.run_cmd_from_history()
@@ -103,7 +106,19 @@ class ShellCmdArch():
         elif commands == ["history","clear"]:
             self.cmdArch.clear_history()
         else:
-            print("Invalid commands")
+            if commands[0] == "new":
+                # construct string to run
+                commands.pop(0)
+                cmd_str = ""
+                for c in commands:
+                    cmd_str += c + " "
+
+                cmdBuilder = CommandBuilder()
+                cmd = cmdBuilder.from_string(cmd_str)
+                print(str(cmd))
+                self.cmdArch.run_new_cmd(cmd, session_state)
+            else:
+                print("Invalid commands")
 
 
 

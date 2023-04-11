@@ -33,13 +33,18 @@ class Command():
         new_flag_token = FlagToken(flag_value[0],flag_value[1])
         self.token_flags.append(new_flag_token)
 
+    def set_token_flag(self, token_flags):
+        self.token_flags = token_flags
+
     def get_flags(self):
         return self.token_flags
 
     def cmd(self):
         cmd_string = str(self.script) + " "
-        for flag in self.token_flags:
-            cmd_string += str(flag) + " "
+        for flag_value in self.token_flags:
+            flag = flag_value[0]
+            value = flag_value[1]
+            cmd_string += str(flag) + "=" + str(value) + " "
         
         cmd_string += str(self.build_cmd) + " ; "
         cmd_string += str(self.epilogue)
@@ -78,10 +83,66 @@ class CommandBuilder():
     def __init__(self):
         self.cmd = Command()
 
+    def from_string(self, str_script):
+        tokens = str_script.split(' ')
+        index = 0
+
+        # Find all tokens to build the script
+        while("=" not in tokens[index] and index < len(tokens)):
+            index += 1
+
+        # Construct script string
+        script = ""
+        for i in range(0, index):
+            script += tokens[i] + " "
+
+        flag_start_index = index
+        # Find flags
+        while("=" in tokens[index] and index < len(tokens)):
+            index += 1
+
+        # Construct the flag tokens
+        flag_tokens = []
+        for i in range(flag_start_index, index):
+            flag_value = tokens[i].split('=')
+            flag_tokens.append(flag_value)
+
+        # Find build script
+        if index + 1 == len(tokens):
+            print("ERROR: no more tokens. Expected a build command")
+            return None
+
+        build_start_index = index
+        build_str = tokens[build_start_index]
+
+        # Get Epilogues
+        index += 1
+        epilogue_str = ""
+        for i in range(index, len(tokens)):
+            epilogue_str += tokens[i] + " "
+
+
+        print("BUILDING COMMAND")
+        self.set_script(script)
+        self.set_token_flag(flag_tokens)
+        print(flag_tokens)
+        self.set_build_cmd(build_str)
+        self.set_epilogue(epilogue_str)
+
+        return self.build()
+
+
+
+
+
+
     def set_script(self, script):
         self.cmd.set_script(script)
 
         return self
+
+    def set_token_flag(self, token_flags):
+        self.cmd.set_token_flag(token_flags)
 
     def append_token_flag(self, flag_value):
         self.cmd.append_token_flag(flag_value)
